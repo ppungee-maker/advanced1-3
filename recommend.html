@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 여행 추천 — 추천 받기</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-container">
+      <a href="index.html" class="logo">✈️ AI 여행 추천</a>
+      <button class="nav-toggle" aria-label="메뉴 열기">☰</button>
+      <nav class="site-nav">
+        <a href="index.html">홈</a>
+        <a href="recommend.html">여행 추천</a>
+        <a href="about.html">소개</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>여행 날짜를 알려주세요</h1>
+    <p>선택한 날짜를 기준으로 AI가 여행지를 추천해드립니다.</p>
+
+    <form id="recommendForm" class="recommend-form">
+      <div class="form-group">
+        <label for="dateInput">여행 날짜</label>
+        <input type="date" id="dateInput" name="date" required />
+      </div>
+      <button type="submit" class="btn" id="submitBtn">추천 받기</button>
+      <p class="form-message" id="formMessage"></p>
+    </form>
+
+    <div id="result"></div>
+  </main>
+
+  <footer class="site-footer">AI 여행 추천 — Codyssey A1-3 미션 프로젝트</footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/recommend.js"></script>
+</body>
+</html>
