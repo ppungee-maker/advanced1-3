@@ -4,7 +4,7 @@
 3페이지짜리 반응형 웹 서비스. 프론트는 바닐라 HTML/CSS/JS, 백엔드는 Vercel Serverless
 Function(Python)으로 OpenAI + Kakao Local API를 연동한다.
 
-- **배포 URL**: (Vercel 배포 후 이 자리에 업데이트 — 아래 "배포 방법" 참고)
+- **배포 URL**: https://advanced1-3.vercel.app
 - **서비스 기획서**: [`기획서.md`](./기획서.md)
 - **미션 원문**: [`문제.md`](./문제.md)
 
@@ -182,6 +182,31 @@ README(지금 이 문서)에 문서화하면 된다.
 `api/*.py`를 서버리스 함수로 실행한다. 배포 후 버그를 발견하면: 로컬에서 원인 파악 →
 코드 수정 → `git push` → Vercel이 GitHub 웹훅으로 감지해 자동 재배포 → 새 배포 URL(또는
 같은 프로덕션 URL)에서 재확인하는 흐름을 따른다.
+
+**실제 배포 트러블슈팅 사례** (이 흐름을 그대로 겪은 실제 기록):
+
+1. 첫 배포가 `No python entrypoint found in default locations`로 실패 → Vercel이
+   제안한 대로 `pyproject.toml`에 `[tool.vercel] entrypoint = "api.recommend:handler"`
+   추가 → `git push` → 재배포
+2. 이번엔 `Error: No 'project' table found in pyproject.toml`로 실패(uv가 표준
+   `[project]` 메타데이터를 요구) → `[project]` 테이블(name/version/dependencies) 추가
+   → 재배포 → 빌드는 성공
+3. 그런데 배포된 사이트의 홈(`/`, GET)에 접속하면 `501 Unsupported method ('GET')`
+   에러가 떴다 — **정적 파일 요청까지 우리 Python 함수 하나로 몰리고 있었다.** 공식 문서를
+   찾아보니 `[tool.vercel] entrypoint`는 "사이트 전체가 하나의 Python 앱(Flask/FastAPI 등)"
+   이라는 뜻이라, Framework Preset이 "Python"으로 잡히면서 정적 사이트+개별 api 함수 구조가
+   아니라 단일 앱 구조로 오인식된 것이 원인이었다
+4. `pyproject.toml`을 완전히 제거하고, 대신 `vercel.json`에 `{"framework": null}`을 추가해
+   Framework Preset을 "Other"로 강제 지정 → 재배포 → 정적 파일과 `/api/recommend`가 각각
+   정상적으로 분리되어 라우팅됨을 확인
+5. 마지막으로 `/api/recommend` 호출 시 "API 키가 설정되지 않았습니다" 에러 확인 → Vercel
+   Environment Variables에 등록된 키 이름이 `KAKAO_REST_API_KEY`가 아니라 `Kakao` 등
+   잘못된 이름으로 들어가 있었음을 발견 → 삭제 후 정확한 이름으로 재등록 → 재배포 후 실제
+   여행지 추천이 정상적으로 동작함을 확인
+
+매 단계마다 "에러 메시지 읽기 → (필요하면 공식 문서로 원인 검증) → 코드/설정 수정 →
+재배포 → 실제 배포 URL에서 재확인"을 반복한 것이 이 미션이 요구하는 배포 트러블슈팅
+흐름 그 자체였다.
 
 **AI 코딩 도구가 생성한 코드의 오류를 어떻게 파악하고 고치는가?**
 개발 중 실제로 겪은 예: 날짜 `<input>`에 `required` 속성을 넣었더니, 빈 값으로 제출할 때
