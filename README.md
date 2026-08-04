@@ -7,6 +7,8 @@ Function(Python)으로 OpenAI + Kakao Local API를 연동한다.
 - **배포 URL**: https://advanced1-3.vercel.app
 - **서비스 기획서**: [`기획서.md`](./기획서.md)
 - **미션 원문**: [`문제.md`](./문제.md)
+- **증빙 자료(스크린샷)**: [`captures/`](./captures) — 배포된 사이트의 데스크톱/모바일
+  홈 화면, AI 여행 추천 기능 실제 동작(부산·크리스마스 시즌 추천 결과) 화면
 
 ## 페이지 구성
 
